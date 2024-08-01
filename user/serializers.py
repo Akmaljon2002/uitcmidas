@@ -1,6 +1,8 @@
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MinLengthValidator, MaxLengthValidator
-from rest_framework.serializers import ModelSerializer, Serializer, CharField, DictField, BooleanField
+from rest_framework.fields import ListField
+from rest_framework.serializers import ModelSerializer, Serializer, CharField, DictField, BooleanField, \
+    ValidationError, ListField
 from user.models import CustomUser
 
 
@@ -52,6 +54,10 @@ class ErrorResponseSerializer(Serializer):
     detail = CharField()
     success = BooleanField()
     data = DictField(child=CharField())
+
+
+class ErrorValSer(Serializer):
+    detail = DictField(child=ListField())
 
 
 class UserCreateSerializer(ModelSerializer):

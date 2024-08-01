@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from user.serializers import UserCreateSerializer, UserLoginSerializer, \
     UserUpdateSerializer, CustomUserSerializer, CreateUserResponseSerializer, \
-    ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer
+    ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
 from utils.responses import response_schema
 
 create_custom_user_schema = extend_schema(
@@ -9,9 +9,10 @@ create_custom_user_schema = extend_schema(
     request=CustomUserSerializer,
     responses={
         201: CreateUserResponseSerializer,
-        400: ErrorResponseSerializer,
+        400: ErrorValSer(),
         409: {"description": "The operation wasn't completed successfully",
-              "example": {'response': 'The user already exists!'}},
+              "example": {'The user already exists!'}},
+        410: ErrorResponseSerializer
     }
 )
 
@@ -25,18 +26,6 @@ login_custom_user_schema = extend_schema(
                }
 )
 
-user_create_schema = extend_schema(
-    summary="User create",
-    request=UserCreateSerializer,
-    responses={
-        200: {"description": "The operation was completed successfully",
-              "example": {'response': 'User created successfully'}},
-        400: {"description": "The operation wasn't completed successfully",
-              "example": {'response': 'The user already exists!'}},
-        429: {"description": "The operation wasn't completed successfully",
-              "example": {"detail": "Request was throttled. Expected available in (number) seconds."}},
-    }
-)
 
 user_login_schema = extend_schema(
     summary="User login",
@@ -60,14 +49,3 @@ get_current_user_schema = extend_schema(
                }
 )
 
-
-user_update_schema = extend_schema(
-    summary="User update",
-    request=UserUpdateSerializer,
-    responses=response_schema
-)
-
-user_delete_schema = extend_schema(
-    summary="User delete",
-    responses=response_schema
-)
