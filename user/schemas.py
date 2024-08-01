@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from user.serializers import UserCreateSerializer, UserLoginSerializer, \
-    UserGetCurrentSerializer, UserUpdateSerializer, CustomUserSerializer, CreateUserResponseSerializer, \
+    UserUpdateSerializer, CustomUserSerializer, CreateUserResponseSerializer, \
     ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer
 from utils.responses import response_schema
 
@@ -52,10 +52,14 @@ user_login_schema = extend_schema(
 )
 
 
-current_user_schema = extend_schema(
+get_current_user_schema = extend_schema(
     summary="Get current user",
-    responses=UserGetCurrentSerializer
+    responses={200: CustomUserSerializer,
+               401: {"description": "The operation wasn't completed successfully",
+                     "example": {'detail': 'Authentication credentials were not provided.'}}
+               }
 )
+
 
 user_update_schema = extend_schema(
     summary="User update",

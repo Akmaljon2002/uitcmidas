@@ -6,12 +6,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from user.models import CustomUser
-from user.schemas import user_create_schema, user_login_schema, current_user_schema, \
-    user_update_schema, user_delete_schema, create_custom_user_schema, login_custom_user_schema
+from user.schemas import user_create_schema, user_login_schema, \
+    user_update_schema, user_delete_schema, create_custom_user_schema, login_custom_user_schema, get_current_user_schema
 from user.serializers import UserCreateSerializer, UserLoginSerializer, \
-    UserGetCurrentSerializer, UserUpdateSerializer, CustomUserSerializer
+    UserUpdateSerializer, CustomUserSerializer
 from utils.chack_auth import IPThrottle
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 import aiohttp
 import asyncio
 from utils.responses import success
@@ -74,6 +74,14 @@ def login_user_token(request):
     refresh = RefreshToken.for_user(user)
     serialized_user = CustomUserSerializer(user).data
     return Response({'refresh': str(refresh), 'access': str(refresh.access_token), 'user': serialized_user})
+
+
+@get_current_user_schema
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    serializer = CustomUserSerializer(request.user)
+    return Response(serializer.data, status=200)
 
 
 # @user_login_schema
