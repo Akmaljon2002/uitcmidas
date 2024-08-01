@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from user.serializers import CustomUserSerializer, CreateUserResponseSerializer, \
-    ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
+    CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
+from utils.responses import response_schema
 
 create_custom_user_schema = extend_schema(
     summary="Create new user",
@@ -8,7 +9,6 @@ create_custom_user_schema = extend_schema(
     responses={
         201: CreateUserResponseSerializer,
         400: ErrorValSer(),
-        410: ErrorResponseSerializer
     }
 )
 
@@ -17,8 +17,7 @@ login_custom_user_schema = extend_schema(
     request=CustomUserTokenSerializer,
     responses={200: LoginResponseSerializer,
                404: {"description": "The operation wasn't completed successfully",
-                     "example": {'detail': 'User not found!',
-                                 'success': False}}
+                     "example": {'detail': 'User not found!'}}
                }
 )
 
@@ -30,4 +29,14 @@ get_current_user_schema = extend_schema(
                      "example": {'detail': 'Authentication credentials were not provided.'}}
                }
 )
+
+
+user_update_schema = extend_schema(
+    summary="User update",
+    request=CustomUserSerializer,
+    responses={200: {"description": "The operation was completed successfully", "example": {"detail": "Success!"}},
+               401: {"description": "The operation wasn't completed successfully",
+                     "example": {'detail': 'Authentication credentials were not provided.'}}
+})
+
 

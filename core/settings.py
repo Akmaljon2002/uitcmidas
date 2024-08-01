@@ -32,8 +32,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework_simplejwt',
 
-    'dishes',
-    'user'
+    'user',
+    'admins'
 
 ]
 
@@ -141,11 +141,24 @@ REST_FRAMEWORK = {
     ],
 }
 
+
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'MIDAS API',
-    'DESCRIPTION': 'Start up',
-    'VERSION': '1.0.1',
+    'TITLE': 'Midas API',
+    'DESCRIPTION': 'Start Up',
+    'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'displayOperationId': True,
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 1,
+        'defaultModelRendering': 'model',
+        'filter': True,
+        'operationsSorter': 'alpha',
+        'showExtensions': True,
+        'showCommonExtensions': True,
+    },
 }

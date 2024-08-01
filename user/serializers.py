@@ -12,6 +12,7 @@ class CustomUserSerializer(ModelSerializer):
                   'is_active')
         extra_kwargs = {
             'is_active': {'read_only': True},
+            'role': {'read_only': True},
             'password': {'write_only': True}
         }
 
@@ -42,17 +43,9 @@ class LoginResponseSerializer(Serializer):
 
 
 class CreateUserResponseSerializer(Serializer):
-    detail = CharField()
-    success = BooleanField()
     refresh = CharField()
     access = CharField()
     user = CustomUserSerializer()
-
-
-class ErrorResponseSerializer(Serializer):
-    detail = CharField()
-    success = BooleanField()
-    data = DictField(child=CharField())
 
 
 class ErrorValSer(Serializer):
