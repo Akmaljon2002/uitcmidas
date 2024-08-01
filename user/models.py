@@ -10,6 +10,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    role = models.CharField(max_length=50, blank=True, null=True, choices=(
+        ('admin', 'admin'),
+        ('seller', 'seller'),
+        ('client', 'client')
+    ))
 
     objects = CustomUserManager()
 
