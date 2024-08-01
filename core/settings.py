@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 import os
 from decouple import config
@@ -33,7 +34,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     'user',
-    'admins'
+    'admins',
+    'sales',
+    'sellers',
 
 ]
 
@@ -139,6 +142,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
 }
 
 

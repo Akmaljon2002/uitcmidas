@@ -1,12 +1,23 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-from admins.schemas import get_users_schema, user_delete_schema
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from admins.schemas import get_users_schema, user_delete_schema, get_categories_schema, create_category_schema, \
+    get_category_schema, update_category_schema, delete_category_schema
+from sellers.models import Category
+from sellers.serializers import CategorySerializer
 from user.models import CustomUser
 from user.serializers import CustomUserSerializer
-from utils.chack_auth import permission
+from utils.chack_auth import permission, RolePermission
 from utils.pagination import paginate
 from utils.responses import success
+
+
+class AdminBaseAuthView(APIView):
+    permission_classes = [IsAuthenticated, RolePermission]
+    roles = ["admin"]
 
 
 @get_users_schema
@@ -29,3 +40,50 @@ def user_delete(request, pk: int):
     user = get_object_or_404(CustomUser, id=pk)
     user.delete()
     return success
+
+
+class AdminCategoriesView(AdminBaseAuthView):
+    parser_classes = [MultiPartParser]
+
+    @get_categories_schema
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    @create_category_schema
+    def post(self, request):
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success
+
+
+class AdminCategoryDetailView(AdminBaseAuthView):
+    parser_classes = [MultiPartParser]
+
+    def _get_object(self, pk):
+        return get_object_or_404(Category, id=pk)
+
+    @get_category_schema
+    def get(self, request, pk):
+        category = self._get_object(pk)
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+
+    @update_category_schema
+    def put(self, request, pk):
+        category = self._get_object(pk)
+        serializer = CategorySerializer(category, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success
+
+    @delete_category_schema
+    def delete(self, request, pk):
+        category = self._get_object(pk)
+        category.delete()
+        return success
+
+
+
