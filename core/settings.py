@@ -155,7 +155,6 @@ SPECTACULAR_SETTINGS = {
         'displayOperationId': True,
         'defaultModelsExpandDepth': 2,
         'defaultModelExpandDepth': 1,
-        'defaultModelRendering': 'model',
         'filter': True,
         'operationsSorter': 'alpha',
         'showExtensions': True,
