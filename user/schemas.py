@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema
-from user.serializers import UserLoginSerializer, \
-    CustomUserSerializer, CreateUserResponseSerializer, \
+from user.serializers import CustomUserSerializer, CreateUserResponseSerializer, \
     ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
 
 create_custom_user_schema = extend_schema(
@@ -21,20 +20,6 @@ login_custom_user_schema = extend_schema(
                      "example": {'detail': 'User not found!',
                                  'success': False}}
                }
-)
-
-
-user_login_schema = extend_schema(
-    summary="User login",
-    request=UserLoginSerializer,
-    responses={
-        200: {"description": "The operation was completed successfully",
-              "example": {'response': 'An SMS was sent, It is valid for 5 minutes'}},
-        404: {"description": "The operation wasn't completed successfully",
-              "example": {'response': 'CustomUser not found!'}},
-        429: {"description": "The operation wasn't completed successfully",
-              "example": {"detail": "Request was throttled. Expected available in (number) seconds."}},
-    }
 )
 
 
