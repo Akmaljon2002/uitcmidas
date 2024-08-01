@@ -1,8 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MinLengthValidator, MaxLengthValidator
-from rest_framework.fields import ListField
 from rest_framework.serializers import ModelSerializer, Serializer, CharField, DictField, BooleanField, \
-    ValidationError, ListField
+    ListField
 from user.models import CustomUser
 
 

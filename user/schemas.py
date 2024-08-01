@@ -1,8 +1,7 @@
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from user.serializers import UserCreateSerializer, UserLoginSerializer, \
-    UserUpdateSerializer, CustomUserSerializer, CreateUserResponseSerializer, \
+from drf_spectacular.utils import extend_schema
+from user.serializers import UserLoginSerializer, \
+    CustomUserSerializer, CreateUserResponseSerializer, \
     ErrorResponseSerializer, CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
-from utils.responses import response_schema
 
 create_custom_user_schema = extend_schema(
     summary="Create new user",
@@ -10,8 +9,6 @@ create_custom_user_schema = extend_schema(
     responses={
         201: CreateUserResponseSerializer,
         400: ErrorValSer(),
-        409: {"description": "The operation wasn't completed successfully",
-              "example": {'The user already exists!'}},
         410: ErrorResponseSerializer
     }
 )
