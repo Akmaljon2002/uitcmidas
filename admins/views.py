@@ -5,8 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from admins.schemas import get_users_schema, user_delete_schema, get_categories_schema, create_category_schema, \
-    get_category_schema, update_category_schema, delete_category_schema
-from sellers.models import Category
+    get_category_schema, update_category_schema, delete_category_schema, get_admin_products_schema, \
+    create_admin_product_schema, get_admin_product_schema, update_admin_product_schema, delete_admin_product_schema
+from admins.serializers import ProductAdminSerializer
+from sellers.models import Category, Product
 from sellers.serializers import CategorySerializer
 from user.models import CustomUser
 from user.serializers import CustomUserSerializer
@@ -84,6 +86,55 @@ class AdminCategoryDetailView(AdminBaseAuthView):
         category = self._get_object(pk)
         category.delete()
         return success
+
+
+class AdminProductsView(AdminBaseAuthView):
+    @get_admin_products_schema
+    def get(self, request, category_id: int, seller_id: int):
+        category = get_object_or_404(Category, id=category_id)
+        seller = get_object_or_404(CustomUser, id=seller_id)
+
+        products = Product.objects.filter(category=category, seller=seller).all()
+        return paginate(products, ProductAdminSerializer, request)
+
+
+class AdminCreateProductView(AdminBaseAuthView):
+    parser_classes = [MultiPartParser]
+
+    @create_admin_product_schema
+    def post(self, request):
+        serializer = ProductAdminSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success
+
+
+class AdminProductDetailView(AdminBaseAuthView):
+    parser_classes = [MultiPartParser]
+
+    def _get_object(self, pk):
+        return get_object_or_404(Product, id=pk)
+
+    @get_admin_product_schema
+    def get(self, request, pk):
+        product = self._get_object(pk)
+        serializer = ProductAdminSerializer(product)
+        return Response(serializer.data)
+
+    @update_admin_product_schema
+    def put(self, request, pk):
+        product = self._get_object(pk)
+        serializer = ProductAdminSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success
+
+    @delete_admin_product_schema
+    def delete(self, request, pk):
+        category = self._get_object(pk)
+        category.delete()
+        return success
+
 
 
 

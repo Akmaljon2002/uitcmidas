@@ -39,3 +39,44 @@ create_product_schema = extend_schema(
               "example": {"detail": "No Category matches the given query."}},
     }
 )
+
+get_product_schema = extend_schema(
+    summary="Get Product",
+    responses={200: ProductSerializer,
+               401: {"description": "The operation wasn't completed successfully",
+                     "example": {'detail': 'Authentication credentials were not provided.'}},
+               403: {"description": "The operation wasn't completed successfully",
+                     "example": {'detail': "You don't have permission to perform this action."}},
+               404: {"description": "The operation wasn't completed successfully",
+                     "example": {"detail": "No Product matches the given query."}},
+               }
+)
+
+update_product_schema = extend_schema(
+    summary="Update Product",
+    request=ProductSerializer,
+    responses={
+        200: {"description": "The operation was completed successfully", "example": {"detail": "Success!"}},
+        400: ErrorValSer(),
+        401: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': 'Authentication credentials were not provided.'}},
+        403: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': "You don't have permission to perform this action."}},
+        404: {"description": "The operation wasn't completed successfully",
+              "example": {"detail": "No Category matches the given query."}},
+    }
+)
+
+delete_product_schema = extend_schema(
+    summary="Delete Product",
+    responses={
+        200: {"description": "The operation was completed successfully", "example": {"detail": "Success!"}},
+        400: ErrorValSer(),
+        401: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': 'Authentication credentials were not provided.'}},
+        403: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': "You don't have permission to perform this action."}},
+        404: {"description": "The operation wasn't completed successfully",
+              "example": {"detail": "No Category matches the given query."}},
+    }
+)

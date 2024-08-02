@@ -2,13 +2,18 @@ from datetime import timedelta
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+
+from sellers.models import Category, Product
 from user.schemas import create_custom_user_schema, login_custom_user_schema, get_current_user_schema, \
-    user_update_schema
-from user.serializers import CustomUserSerializer
+    user_update_schema, get_user_categories_schema, get_user_products_schema
+from user.serializers import CustomUserSerializer, UserCategorySerializer, UserProductSerializer
 from utils.chack_auth import IPThrottle, permission
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db import transaction
+
+from utils.pagination import paginate
 from utils.responses import success
 
 
@@ -67,5 +72,26 @@ def user_update(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return success
+
+
+class CategoriesView(APIView):
+    permission_classes = [AllowAny]
+
+    @get_user_categories_schema
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = UserCategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+
+class ProductsView(APIView):
+    permission_classes = [AllowAny]
+
+    @get_user_products_schema
+    def get(self, request, category_id: int = None):
+        products = Product.objects
+        if category_id:
+            products = products.filter(category__id=category_id)
+        return paginate(products.all(), UserProductSerializer, request)
 
 

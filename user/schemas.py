@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from user.serializers import CustomUserSerializer, CreateUserResponseSerializer, \
-    CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer
+    CustomUserTokenSerializer, LoginResponseSerializer, ErrorValSer, UserCategorySerializer, UserProductSerializer
 from utils.responses import response_schema
 
 create_custom_user_schema = extend_schema(
@@ -38,5 +38,15 @@ user_update_schema = extend_schema(
                401: {"description": "The operation wasn't completed successfully",
                      "example": {'detail': 'Authentication credentials were not provided.'}}
 })
+
+get_user_categories_schema = extend_schema(
+    summary="Get Categories",
+    responses={200: UserCategorySerializer(many=True)}
+)
+
+get_user_products_schema = extend_schema(
+    summary="Get Products",
+    responses={200: UserProductSerializer(many=True)}
+)
 
 

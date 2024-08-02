@@ -3,10 +3,12 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from admins.schemas import delete_category_schema
 from sellers.models import Category, Product
-from sellers.schemas import get_categories_schema, get_products_schema, create_product_schema
+from sellers.schemas import get_categories_schema, get_products_schema, create_product_schema, get_product_schema, \
+    update_product_schema
 from sellers.serializers import CategorySerializer, ProductSerializer
-from utils.chack_auth import permission, RolePermission
+from utils.chack_auth import RolePermission
 from utils.pagination import paginate
 from utils.responses import success
 
@@ -44,28 +46,28 @@ class SellerCreateProductView(SellerBaseAuthView):
         return success
 
 
-# class SellerProductDetailView(SellerBaseAuthView):
-#     parser_classes = [MultiPartParser]
-#
-#     def _get_object(self, pk):
-#         return get_object_or_404(Product, id=pk)
-#
-#     @get_category_schema
-#     def get(self, request, pk):
-#         category = self._get_object(pk)
-#         serializer = ProductSerializer(category)
-#         return Response(serializer.data)
-#
-#     @update_category_schema
-#     def put(self, request, pk):
-#         category = self._get_object(pk)
-#         serializer = ProductSerializer(category, data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return success
-#
-#     @delete_category_schema
-#     def delete(self, request, pk):
-#         category = self._get_object(pk)
-#         category.delete()
-#         return success
+class SellerProductDetailView(SellerBaseAuthView):
+    parser_classes = [MultiPartParser]
+
+    def _get_object(self, request, pk):
+        return get_object_or_404(Product, id=pk, seller=request.user)
+
+    @get_product_schema
+    def get(self, request, pk):
+        product = self._get_object(pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    @update_product_schema
+    def put(self, request, pk):
+        product = self._get_object(pk)
+        serializer = ProductSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success
+
+    @delete_category_schema
+    def delete(self, request, pk):
+        category = self._get_object(pk)
+        category.delete()
+        return success

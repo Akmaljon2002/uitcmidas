@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import make_password
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework.serializers import ModelSerializer, Serializer, CharField, DictField, BooleanField, \
     ListField
+
+from sellers.models import Category, Product
 from user.models import CustomUser
 
 
@@ -82,5 +84,17 @@ class UserUpdateSerializer(ModelSerializer):
 class UserLoginSerializer(Serializer):
     phone = CharField(max_length=9, validators=[MinLengthValidator(9), MaxLengthValidator(9)])
     password = CharField(max_length=255)
+
+
+class UserCategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
+class UserProductSerializer(ModelSerializer):
+    class Meta:
+        model = Product
+        exclude = ('seller', )
 
 
