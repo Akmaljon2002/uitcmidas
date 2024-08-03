@@ -18,7 +18,7 @@ class Product(models.Model):
     discount = models.PositiveIntegerField(default=0)
     photo = models.ImageField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="products")
 
     def __str__(self):
         return self.name

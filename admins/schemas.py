@@ -1,6 +1,6 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from admins.serializers import ProductAdminSerializer
+from admins.serializers import ProductAdminSerializer, SellerSerializer
 from sellers.serializers import CategorySerializer
 from user.serializers import CustomUserSerializer, ErrorValSer
 from utils.pagination import PaginationGetSerializer
@@ -26,7 +26,7 @@ user_delete_schema = extend_schema(
                      "example": {'detail': 'Authentication credentials were not provided.'}},
                403: {"description": "The operation wasn't completed successfully",
                      "example": {'detail': "You don't have permission to perform this action."}},
-})
+               })
 
 get_categories_schema = extend_schema(
     summary="Get Categories",
@@ -162,3 +162,23 @@ delete_admin_product_schema = extend_schema(
     }
 )
 
+create_seller_schema = extend_schema(
+    summary="Create new seller",
+    request=SellerSerializer,
+    responses={
+        200: {"description": "The operation was completed successfully", "example": {"detail": "Success!"}},
+        400: ErrorValSer(),
+        401: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': 'Authentication credentials were not provided.'}},
+        403: {"description": "The operation wasn't completed successfully",
+              "example": {'detail': "You don't have permission to perform this action."}},
+    }
+)
+
+seller_update_schema = extend_schema(
+    summary="Seller update",
+    request=SellerSerializer,
+    responses={200: {"description": "The operation was completed successfully", "example": {"detail": "Success!"}},
+               401: {"description": "The operation wasn't completed successfully",
+                     "example": {'detail': 'Authentication credentials were not provided.'}}
+})

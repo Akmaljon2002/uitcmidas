@@ -1,18 +1,20 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from admins.schemas import get_users_schema, user_delete_schema, get_categories_schema, create_category_schema, \
     get_category_schema, update_category_schema, delete_category_schema, get_admin_products_schema, \
-    create_admin_product_schema, get_admin_product_schema, update_admin_product_schema, delete_admin_product_schema
-from admins.serializers import ProductAdminSerializer
+    create_admin_product_schema, get_admin_product_schema, update_admin_product_schema, delete_admin_product_schema, \
+    create_seller_schema, seller_update_schema
+from admins.serializers import ProductAdminSerializer, SellerSerializer
 from sellers.models import Category, Product
 from sellers.serializers import CategorySerializer
 from user.models import CustomUser
 from user.serializers import CustomUserSerializer
-from utils.chack_auth import permission, RolePermission
+from utils.chack_auth import permission, RolePermission, IPThrottle
 from utils.pagination import paginate
 from utils.responses import success
 
@@ -24,7 +26,6 @@ class AdminBaseAuthView(APIView):
 
 @get_users_schema
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 @permission(["admin"])
 def get_users(request):
     role = request.query_params.get('role')
@@ -36,11 +37,32 @@ def get_users(request):
 
 @user_delete_schema
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
 @permission(["admin"])
 def user_delete(request, pk: int):
     user = get_object_or_404(CustomUser, id=pk)
     user.delete()
+    return success
+
+
+@create_seller_schema
+@api_view(['POST'])
+@throttle_classes([IPThrottle])
+@transaction.atomic()
+@permission(["admin"])
+def seller_create(request):
+    serializer = SellerSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(role="seller")
+    return success
+
+
+@seller_update_schema
+@api_view(['PUT'])
+def seller_update(request, pk:int):
+    seller = get_object_or_404(CustomUser, id=pk)
+    serializer = SellerSerializer(instance=seller, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
     return success
 
 
