@@ -103,3 +103,4 @@ class SellerSaleDetailView(SellerBaseAuthView):
         sale.status = status
         sale.save()
         return success
+
